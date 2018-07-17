@@ -1,0 +1,77 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#agregar_acta_fecha_edit').datetimepicker({
+            format: 'DD/MM/YYYY',
+            locale: 'es'
+        });
+        $('#agregar_acta_hora_edit').datetimepicker({
+            format: 'HH:mm'
+        });
+
+        $('.selectpicker').selectpicker('refresh');
+    });
+</script>
+<div id="div_editar_acta" name="div_editar_acta">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{% url 'editar_acta' id_acta=acta.id %}" method="POST" role="form" id="editar_acta_form" name="editar_acta_form">
+                {% csrf_token %}
+                <input type="hidden" value="editar" name="tipo_post">
+                <div class="modal-header">
+                    <h4 class="modal-title">Editar Reunión</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 m-b-10">
+                            <div class="form-group fg-float">
+                                <label class="f-500 m-b-10 c-black">Fecha</label>
+                                <div class="fg-line">
+                                    <input id="agregar_acta_fecha_edit" name="agregar_acta_fecha" type="text" class="form-control input-mask" data-mask="00/00/0000" maxlength="10" autocomplete="off" value="{{acta.fecha_acta|date:'d/m/Y'}}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 m-b-10">
+                            <div class="form-group fg-float">
+                                <label class="f-500 m-b-10 c-black">Hora</label>
+                                <div class="fg-line">
+                                    <input id="agregar_acta_hora_edit" name="agregar_acta_hora" type="text" class="form-control input-mask" data-mask="00:00" maxlength="10" autocomplete="off" value="{{acta.fecha_acta|date:'H:i'}}">
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 m-b-10">
+                            <div class="form-group fg-float">
+                                <label class="f-500 m-b-10 c-black">Objetivo</label>
+                                <div class="fg-line">
+                                    <textarea rows="5" id="agregar_acta_resumen" name="agregar_acta_resumen" maxlength="600" class="form-control auto-size" >{{acta.resumen_acta.strip}}</textarea>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 m-b-10">
+                            <div class="form-group fg-float">
+                                <label class="f-500 m-b-10 c-black">Asistentes</label>
+                                <div class="fg-line">
+                                    <select id="editar_acta_miembros_presentes" name="agregar_acta_miembros_presentes" class="selectpicker" multiple data-size="5">
+                                        {% for user_proyecto in usuarios_proyecto %}
+                                            <option id="miembro_logueado_presente" {% if user_proyecto.usuario in usuarios_acta %}selected{% endif %} value="{{ user_proyecto.usuario.id }}">{{ user_proyecto.usuario.user.first_name }} {{ user_proyecto.usuario.user.last_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="agregar_reunion" name="agregar_reunion" class="btn bgm-blue waves-effect" onclick="submit_action=true; $('#miembro_logueado_presente').attr('disabled', false);">Editar</button>
+                </div>
+                <input type="hidden" id="cantidad_total_temas" name="cantidad_total_temas" value="0"/>
+            </form>
+        </div>
+    </div>
+</div>

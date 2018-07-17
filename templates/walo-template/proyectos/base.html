@@ -1,0 +1,50 @@
+{% extends 'walo-template/base.html' %}
+{% load staticfiles %}
+{% block titulo %}Ver Proyecto{% endblock %}
+
+{% block breadcumb %}
+    <li class=""><a href="http://{{ request.get_host }}/index/">Proyectos</a></li>
+    <li class="active"><strong>{{ proyecto.nombre_proyecto }}</strong></li>
+{% endblock %}
+{% block contenido %}
+<section id="content">
+    <div class="container">
+        <div class="card" id="profile-main">
+            <div class="pm-overview c-overflow" tabindex="5" style="overflow: hidden; outline: none;">
+                <div class="pmo-block pmo-contact hidden-xs">
+                    <h2>Nombre del Proyecto</h2>
+                    <ul>
+                        <li><i class="md-content-paste"></i> {{ proyecto.nombre_proyecto }}</li>
+                    </ul>
+                </div>
+
+                <div class="pmo-block pmo-items hidden-xs">
+                    <h2>Miembros del Equipo</h2>
+
+                    <div class="pmob-body">
+                        <div class="row">
+                            {% for usuario_proyecto in proyecto.usuario_proyecto_set.all %}
+                                <a href="" class="col-xs-2">
+                                    <img class="img-circle" src="{% static "img/profile-pics/user-default.png" %}" alt="" data-toggle="tooltip" data-placement="top" title="{{ usuario_proyecto.usuario.user.first_name }} {{ usuario_proyecto.usuario.user.last_name }}">
+                                </a>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pm-body clearfix">
+                <ul class="tab-nav tn-justified" tabindex="1" style="overflow: hidden; outline: none;">
+                    {% block menu_activo %}
+                    {% endblock %}
+                </ul>
+                <div class="pmb-block">
+                    {% block contenido_menu_escogido %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

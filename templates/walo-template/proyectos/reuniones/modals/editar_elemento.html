@@ -1,0 +1,121 @@
+<script>
+    $(document).ready(function(){
+        $('#tipo_elemento').selectpicker('refresh');
+        $('#estado_elemento').selectpicker('refresh');
+        $('#responsable_elemento').selectpicker('refresh');
+        $('#elemento_padre').selectpicker('refresh');
+        $('#fecha_inicio').datetimepicker({
+            format: 'DD/MM/YYYY',
+            locale: 'es'
+        });
+        $('#fecha_termino').datetimepicker({
+            format: 'DD/MM/YYYY',
+            locale: 'es'
+        });
+    });
+</script>
+{% load staticfiles %} 
+<div class="modal-dialog">
+    <div class="modal-content">
+            <form method="POST" action="{% url 'editar_elemento' id_elemento=elemento.id%}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h4 class="modal-title">Editar elemento dialógico</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label class="f-500 m-b-10 c-black">Tipo elemento</label>
+                            </div>
+                            <div class="col-sm-12 imagenes-elementos">
+                                <div class="col-sm-2"><a href="javascript:;" class="selector-tipo-elemento" name="AC"><img data-toggle="tooltip" style="{% if elemento.tipo_elemento == 'AC' %}background-color:grey;{% endif %}" title="Acuerdo de coordinación" src="{% static "img/elementos/coordinacion.png" %}"></a></div>
+                                <div class="col-sm-2"><a href="javascript:;" class="selector-tipo-elemento" name="CI"><img data-toggle="tooltip" style="{% if elemento.tipo_elemento == 'CI' %}background-color:grey;{% endif %}" title="Compromiso individual" src="{% static "img/elementos/compromiso.png" %}"></a></div>
+                                <div class="col-sm-2"><a href="javascript:;" class="selector-tipo-elemento" name="DU"><img data-toggle="tooltip" style="{% if elemento.tipo_elemento == 'DU' %}background-color:grey;{% endif %}" title="Duda o Búsqueda" src="{% static "img/elementos/duda.png" %}"></a></div>
+                                <div class="col-sm-2"><a href="javascript:;" class="selector-tipo-elemento" name="DE"><img data-toggle="tooltip" style="{% if elemento.tipo_elemento == 'DE' %}background-color:grey;{% endif %}" title="Desacuerdo o Brecha" src="{% static "img/elementos/desacuerdo.png" %}"></a></div>
+                                <div class="col-sm-2"><a href="javascript:;" class="selector-tipo-elemento" name="NC"><img data-toggle="tooltip" style="{% if elemento.tipo_elemento == 'NC' %}background-color:grey;{% endif %}" title="Normas comunes" src="{% static "img/elementos/normas.png" %}"></a></div>
+                                <input type="hidden" name="tipo_elemento" id="tipo_elemento">  
+                            </div>                         
+                        </div>
+                        <div class="row">
+                                <div class="col-sm-6 m-b-10">
+                                        <label class="f-500 m-b-10 c-black">Estado</label>        
+                                        <select class="selectpicker" id="estado_elemento" name="estado_elemento">                
+                                            <!-- Estados compromisos -->
+                                            <option name="estado_tipo_elemento" value="PA" {% if elemento.estado_elemento == 'PA' %}selected="selected"{% endif %}>Pendiente por asignar</option>
+                                            <option name="estado_tipo_elemento" value="AS" data-subtext="Asignado y está en curso" {% if elemento.estado_elemento == 'EC' %}selected="selected"{% endif %}>Asignado</option>
+                                            <option name="estado_tipo_elemento" value="CP" {% if elemento.estado_elemento == 'CP' %}selected="selected"{% endif %}>Completado</option>
+                                            <option name="estado_tipo_elemento" value="EL" {% if elemento.estado_elemento == 'EL' %}selected="selected"{% endif %}>Eliminado</option>
+                
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6 m-b-10">
+                                            <div class="form-group fg-line">
+                                                <label>Fecha Término</label>
+                                                <input name="fecha_termino" id="fecha_termino" type="text" class="form-control input-mask" data-mask="00/00/0000" placeholder="ej:01/06/2014" maxlength="10" autocomplete="off" value="{{elemento.fecha_termino|date:'d/m/Y'}}">
+                                            </div>
+                                    </div>
+
+                        </div>
+                        <div class="row" id="usuario_responsable_compromiso" style="display:none;">
+                            <div class="col-sm-12 m-b-20">
+                                <label class="f-500 m-b-10 c-black">Persona asignada</label>
+                                <select class="selectpicker" id="responsable_elemento" name="persona_asignada" data-size="5">
+                                    {% for user_proyecto in usuarios_proyecto %}
+                                        <option value="{{ user_proyecto.usuario.id }}">{{ user_proyecto.usuario.user.first_name }} {{ user_proyecto.usuario.user.last_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>        
+                        <div class="row">
+                            <div class="col-sm-12 m-b-20">
+                                <label class="f-500 m-b-10 c-black">Titulo elemento</label>
+                                <div class="fg-line">
+                                    <textarea class="form-control auto-size" name="nombre_elemento" placeholder="Ingrese nombre" id="nombre_elemento" maxlength="50">{{elemento.titulo_elemento}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 m-b-20">
+                                <label class="f-500 m-b-10 c-black">Descripción (opcional)</label>
+                                <div class="fg-line">
+                                    <textarea rows="3" maxlength="600" name="descripcion_elemento" class="form-control" placeholder="Ingrese ..." id="descripcion_elemento">{{elemento.descripcion_elemento}}</textarea>                                    
+                                </div>
+                            </div>
+                        </div>    
+                                         
+                        <div class="row">
+                            <div class="col-sm-12 m-b-20">
+                                <p class="f-500 m-b-10 c-black">Definir elemento que lo genera</p>
+                                <select class="selectpicker" name="elemento_padre" id="elemento_padre" data-size="5" data-live-search="true">
+                                    <option value="">NO TIENE</option>
+                                    
+                                            {% for elementos in lista_elementos %}
+
+                                                {% if elemento.id != elementos.id and elementos.estado != 'EL' %}
+                                                <option value="{{ elementos.id }}" {% if elementos.id == elemento.elemento_padre.id %}selected="selected"{% endif %}>
+                                                    {% if elementos.tipo_elemento == "Compromiso" %}
+                                                        CO
+                                                    {% elif elementos.tipo_elemento == "Acuerdo" %}
+                                                        AC
+                                                    {% elif elementos.tipo_elemento == "Duda" %}
+                                                        DU
+                                                    {% elif elementos.tipo_elemento == "Desacuerdo" %}
+                                                        DE
+                                                    {% endif %}.{{ elementos.titulo_elemento|truncatechars:80 }}
+                                                </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        
+                                </select>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" id="agregar_elemento" class="btn bgm-blue waves-effect">Editar</button>
+                    </div>
+                </form>
+    </div>
+</div>
+     

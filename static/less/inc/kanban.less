@@ -1,0 +1,49 @@
+.kanban{
+    .kanban-col-body{
+        min-height: 600px
+    }
+
+    .kanban-card{
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        min-height: 50px;
+        color: #fff;
+        padding: 7px;
+        position: relative;
+        &:first-child{
+            margin-top: 10px;
+        }
+        &:not(:last-child){
+            margin-bottom: 10px;
+        }
+        .actions{
+            position: absolute;
+            right: 5px;
+            z-index: 2;
+            top: 5px;
+            & > li > a > i, & > a > i{
+                color: #fff !important;  
+            }
+        }
+    }
+
+    .kanban-user-responsable{
+        vertical-align: middle;
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 7px;
+        overflow: hidden;
+        img{
+            width: 30px;
+            height: 30px;
+        }
+    }
+    .kanban-task{
+        vertical-align: middle;
+        display: inline-block;
+        width: 70%;
+        margin: 0;
+    }
+}

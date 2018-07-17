@@ -1,0 +1,457 @@
+{% extends 'walo-template/base.html' %}
+
+{% block titulo %} Inicio {% endblock %}
+
+{% block breadcumb %}
+    <li class="active"><strong>Proyectos</strong></li>
+{% endblock %}
+{% block contenido %}
+    <section id="main">
+        <section id="content">
+            <div class="container">
+                {% if successEditar %}
+                    <div style="border-style: solid; border-width: 1px; border-color: green;" class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <strong>Proyecto editado exitósamente!</strong>
+                    </div>
+                {% endif %}
+                <!-- Mensajes de éxito y error -->
+                {% if successAgregar %}
+                    <div style="border-style: solid; border-width: 1px; border-color: green;" class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <strong>Proyecto agregado exitósamente!</strong>
+                    </div>
+                {% endif %}
+                {% if successEliminarProyecto %}
+                    <div style="border-style: solid; border-width: 1px; border-color: green;" class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <strong>Proyecto eliminado exitósamente!</strong>
+                    </div>
+                {% endif %}
+                <!-- Modal agregar proyecto -->
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="modal fade" id="agregar_proyecto_modal" data-backdrop="static" data-keyboard="false">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title">Agregar Proyecto</h3>
+                                    </div>
+                                    <form action="/agregar_proyecto/" method="POST" class="addEvent" role="form" id="agregar_proyecto_form" name="agregar_proyecto_form">
+                                        <div class="modal-body">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col-sm-12 m-b-20">
+                                                    <div class="form-group fg-line">
+                                                        <label>Nombre del Proyecto</label>
+                                                        <input id="agregar_proyecto_nombre" name="agregar_proyecto_nombre" type="text" class="form-control" placeholder="ej: El enfoque diálogo acción: Caso de las actas dialógicas en SCRUM" maxlength="50" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 m-b-20">
+                                                    <div class="form-group fg-line">
+                                                        <label>Descripción del Proyecto</label>
+                                                        <textarea rows="6" id="agregar_proyecto_descripcion" name="agregar_proyecto_descripcion" type="text" class="form-control auto-size" placeholder="ej: Se pretende integrar el diálogo y la acción en los proyecto de desarrollo de software" maxlength="600"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 m-b-10">
+                                                    <div class="form-group fg-line">
+                                                        <label>Fecha Inicio</label>
+                                                        <input id="agregar_proyecto_fecha_inicio" name="agregar_proyecto_fecha_inicio" type="text" class="form-control input-mask" data-mask="00/00/0000" placeholder="ej: 12/05/2015" maxlength="10" autocomplete="off">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-6 m-b-10">
+                                                    <div class="form-group fg-line">
+                                                        <label>Fecha Fin Estimada</label>
+                                                        <input id="agregar_proyecto_fecha_fin" name="agregar_proyecto_fecha_fin" type="text" class="form-control input-mask" data-mask="00/00/0000" placeholder="ej: 12/05/2015" maxlength="10" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 m-b-20">
+                                                    <p class="f-500 m-b-10 c-black">Miembros del Equipo</p>
+
+                                                    <select id="agregar_proyecto_miembros" name="agregar_proyecto_miembros" class="selectpicker" multiple>
+                                                        {% for usuario in lista_usuarios %}
+                                                            <option value="{{ usuario.id }}">{{ usuario.user.first_name }} {{ usuario.user.last_name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
+                                                <button type="submit"class="btn bgm-blue waves-effect waves-effect waves-button waves-float" id="agregar_proyecto_btn">Agregar</button>
+                                            </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="card">
+                            <div class="card-header ch-alt m-b-20">
+                                <h2>Proyectos activos</small></h2>
+                                <button id="agregar_proyecto" class="btn bgm-cyan btn-float waves-effect waves-button waves-float"><i class="md md-add"></i></button>
+                            </div>
+                            {% if lista_proyectos_activos %}
+                                <div class="card-body">
+                                    <div class="listview">
+
+                                    <!-- Se ponen los input hidden para tener los valores para poder editar el proyecto en el modal -->
+                                    {% for usuario_proyecto in lista_proyectos_activos %}
+                                        <input type="hidden" id="nombre_proyecto_{{ forloop.counter }}" value="{{ usuario_proyecto.proyecto.nombre_proyecto }}"/>
+                                        <input type="hidden" id="descripcion_proyecto_{{ forloop.counter }}" value="{{ usuario_proyecto.proyecto.descripcion_proyecto }}"/>
+                                        <input type="hidden" id="fecha_termino_proyecto_{{ forloop.counter }}" value="{{ usuario_proyecto.proyecto.fecha_fin_proyecto|date:"d/m/Y" }}"/>
+                                        <input type="hidden" id="fecha_inicio_proyecto_{{ forloop.counter }}" value="{{ usuario_proyecto.proyecto.fecha_inicio_proyecto|date:"d/m/Y" }}"/>
+                                        {% for usuarios_en_proyecto in usuario_proyecto.proyecto.usuario_proyecto_set.all %}
+                                            <input type="hidden" name="miembro_proyecto_{{ forloop.parentloop.counter }}" value="{{ usuarios_en_proyecto.usuario.id }}"/>
+                                        {% endfor %}
+
+                                        <div style="margin-top: -20px;" class="lv-item media" id="proyecto_{{ usuario_proyecto.proyecto.id }}">
+                                            <div class="media-body">
+                                                <a class="lv-item" href="http://{{ request.get_host }}/proyectos/ver_proyecto/{{ usuario_proyecto.proyecto.id }}">
+                                                    <div class="media">
+                                                        <div class="media-body">
+                                                            <div class="lv-title">{{ usuario_proyecto.proyecto.nombre_proyecto }}</div>
+                                                            <small class="lv-small">{{ usuario_proyecto.proyecto.descripcion_proyecto }}</small>
+
+                                                        </div>
+
+                                                    </div>
+                                                </a>
+                                                {% if usuario_proyecto.rol_proyecto == "Jefe" %} <!-- Solo si el usuario es jefe, se le muestra el menú para editar -->
+                                                    <div class="lv-actions actions dropdown">
+                                                        <a href="" data-toggle="dropdown" aria-expanded="true">
+                                                            <i class="md md-more-vert"></i>
+                                                        </a>
+
+                                                        <ul class="dropdown-menu dropdown-menu-right">
+                                                            <li>
+                                                                <a href="javascript: void(0);" onclick="abrir_editar_proyecto({{ forloop.counter }}, {{ usuario_proyecto.proyecto.id }})">Editar</a>
+                                                            </li>
+                                                            <li>
+                                                                <a id="eliminar_proyecto" href="javascript: eliminar_proyecto({{ usuario_proyecto.proyecto.id }});">Eliminar</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                {% endif %}
+                                                <!-- form para eliminar proyecto. lo dejé afuera porque dentro del div de arriba, arruinaba el formato.
+                                                    se setea el valor cuando se da click en "eliminar" y se envía el formulario con el valor seteado
+                                                 -->
+                                                <form action="/eliminar_proyecto/" method="POST" role="form" id="eliminar_proyecto_form" name="eliminar_proyecto_form">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" value="" id="id_proyecto_eliminar" name="id_proyecto_eliminar"/>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Modal Editar Proyecto -->
+                    <div class="col-sm-8">
+                        <div class="modal fade" id="modal-editar-proyecto" data-backdrop="static" data-keyboard="false">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title">Editar Proyecto</h3>
+                                    </div>
+                                    <form action="/editar_proyecto/" method="POST" role="form" id="editar_proyecto_form" name="editar_proyecto_form">
+                                        <div class="modal-body">
+                                            {% csrf_token %}
+                                            <input type="hidden" id="proyecto_id" name="proyecto_id" value=""/>
+                                            <div class="row">
+                                                <div class="col-sm-12 m-b-20">
+                                                    <div class="form-group fg-line">
+                                                        <label>Nombre del Proyecto</label>
+                                                        <input id="editar_proyecto_nombre" name="editar_proyecto_nombre" type="text" class="form-control" placeholder="ej: El enfoque diálogo acción: Caso de las actas dialógicas en SCRUM" maxlength="50" autplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 m-b-20">
+                                                    <div class="form-group fg-line">
+                                                        <label>Descripción del Proyecto</label>
+                                                        <textarea rows="6" id="editar_proyecto_descripcion" name="editar_proyecto_descripcion" type="text" class="form-control auto-size" placeholder="ej: Se pretende integrar el diálogo y la acción en los proyecto de desarrollo de software" maxlength="600"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 m-b-10">
+                                                    <div class="form-group fg-line">
+                                                        <label>Fecha Inicio</label>
+                                                        <input id="editar_proyecto_fecha_inicio" name="editar_proyecto_fecha_inicio" type="text" class="form-control input-mask" data-mask="00/00/0000" placeholder="ej: 12/05/2015" maxlength="10" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 m-b-10">
+                                                    <div class="form-group fg-line">
+                                                        <label>Fecha Término</label>
+                                                        <input id="editar_proyecto_fecha_termino" name="editar_proyecto_fecha_termino" type="text" class="form-control input-mask" data-mask="00/00/0000" placeholder="ej: 12/05/2015" maxlength="10" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 m-b-20">
+                                                    <p class="f-500 m-b-10 c-black">Miembros del Equipo</p>
+                                                    <select id="editar_proyecto_miembros" name="editar_proyecto_miembros" class="selectpicker" multiple>
+                                                        {% for usuario in lista_usuarios %}
+                                                            <option id="editar_proyecto_miembro_{{ forloop.counter }}" value="{{ usuario.id }}">{{ usuario.user.first_name }} {{ usuario.user.last_name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn bgm-blue waves-effect waves-effect waves-button waves-float" id="editar_proyecto_btn">Editar</button>
+                                            </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </section>
+    </section>
+
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#agregar_proyecto_fecha_inicio').datetimepicker({
+                format: 'DD/MM/YYYY'
+            });
+            $('#agregar_proyecto_fecha_fin').datetimepicker({
+                format: 'DD/MM/YYYY'
+            });
+            $('#editar_proyecto_fecha_inicio').datetimepicker({
+                format: 'DD/MM/YYYY'
+            });
+            $('#editar_proyecto_fecha_termino').datetimepicker({
+                format: 'DD/MM/YYYY'
+            });
+        });
+
+        $(document).ready(function() {
+
+            $('body').on('click', '#agregar_proyecto', function(e){
+                //e.preventDefault();
+                $('#agregar_proyecto_modal').modal('show');
+
+            });
+
+            //Se elimina informacion del modal al cerrarlo.
+            $('#agregar_proyecto_modal').on('hidden.bs.modal', function() {
+                $('#agregar_proyecto_form').bootstrapValidator('resetForm', true);
+            });
+
+            $('#agregar_proyecto_form').bootstrapValidator({
+                // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+                container: 'tooltip',
+                excluded: ':disabled',
+                feedbackIcons: {
+                    valid: 'md md-check',
+                    invalid: 'md md-close',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    agregar_proyecto_nombre: {
+                        trigger: 'blur',
+                        validators: {
+                            notEmpty: {
+                                message: 'Debe ingresar nombre del proyecto'
+                            },
+                            stringLength: {
+                                min: 5,
+                                message: 'El nombre del proyecto debe tener entre 5 y 50 caracteres'
+                            }
+                        }
+                    },
+                    agregar_proyecto_descripcion: {
+                        trigger: 'blur',
+                        validators: {
+                            notEmpty: {
+                                message: 'Debe ingresar descripción del proyecto'
+                            },
+                            stringLength: {
+                                min: 5,
+                                max: 30,
+                                message: 'La descripción debe tener entre entre 10 y 600 caracteres'
+                            }
+                        }
+                    },
+                    agregar_proyecto_fecha_inicio: {
+                        trigger: 'blur',
+                        validators: {
+                            notEmpty: {
+                                message: 'Debe ingresar fecha de inicio'
+                            },
+                            date: {
+                                format:'DD/MM/YYYY',
+                                message: 'El formato de la fecha es inválido'
+                            }
+                        }
+                    },
+                    agregar_proyecto_fecha_fin: {
+                        trigger: 'blur',
+                        validators: {
+                            notEmpty: {
+                                message: 'Debe ingresar fecha de término estimada'
+                            },
+                            date: {
+                                format:'DD/MM/YYYY',
+                                message: 'El formato de la fecha es inválido'
+                            }
+                        }
+                    },
+                    agregar_proyecto_miembros: {
+                        validators: {
+                            callback: {
+                                message: 'Debe seleccionar al menos un miembro para su equipo',
+                                callback: function(value, validator, $field) {
+                                    // Get the selected options
+                                    var options = validator.getFieldElements('agregar_proyecto_miembros').val();
+                                    return (options != null);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            /*$('#agregar_proyecto_fecha_inicio').on('dp.change dp.show', function(e) {
+                $('#agregar_proyecto_form').bootstrapValidator('revalidateField', 'agregar_proyecto_fecha_inicio');
+            });
+            */
+
+            $('#editar_proyecto_form').bootstrapValidator({
+                // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+                container: 'tooltip',
+                excluded: ':disabled',
+                feedbackIcons: {
+                    valid: 'md md-check',
+                    invalid: 'md md-close',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    editar_proyecto_nombre: {
+                        trigger: 'blur',
+                        validators: {
+                            notEmpty: {
+                                message: 'Debe ingresar nombre del proyecto'
+                            },
+                            stringLength: {
+                                min: 5,
+                                message: 'El nombre del proyecto debe tener entre 5 y 50 caracteres'
+                            }
+                        }
+                    },
+                    editar_proyecto_descripcion: {
+                        trigger: 'blur',
+                        validators: {
+                            notEmpty: {
+                                message: 'Debe ingresar descripción del proyecto'
+                            },
+                            stringLength: {
+                                min: 5,
+                                max: 30,
+                                message: 'La descripción debe tener entre entre 10 y 600 caracteres'
+                            }
+                        }
+                    },
+                    editar_proyecto_fecha_inicio: {
+                        trigger: 'blur',
+                        validators: {
+                            notEmpty: {
+                                message: 'Debe ingresar fecha de inicio'
+                            },
+                            date: {
+                                format: 'DD/MM/YYYY',
+                                message: 'Debe ingresar fecha de inicio'
+                            }
+                        }
+                    },
+                    editar_proyecto_fecha_termino: {
+                        trigger: 'blur',
+                        validators: {
+                            date: {
+                                format: 'DD/MM/YYYY',
+                                message: 'Formato erróneo'
+                            }
+                        }
+                    },
+                    editar_proyecto_miembros: {
+                        validators: {
+                            callback: {
+                                message: 'Debe seleccionar al menos un miembro para su equipo',
+                                callback: function (value, validator, $field) {
+                                    // Get the selected options
+                                    var options = validator.getFieldElements('editar_proyecto_miembros').val();
+                                    return (options != null);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            $('#modal-editar-proyecto').on('hidden.bs.modal', function () {
+                $('#editar_proyecto_nombre').val('');
+                $('#editar_proyecto_descripcion').val('');
+                $('#editar_proyecto_fecha_inicio').val('');
+                $('#editar_proyecto_fecha_termino').val('');
+                $('#proyecto_id').val('');
+            });
+
+        });
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+
+        function abrir_editar_proyecto(num, id_proyecto){
+            console.log("proyecto id: "+id_proyecto);
+            $('#editar_proyecto_nombre').val($('#nombre_proyecto_'+num).val());
+            $('#editar_proyecto_descripcion').val($('#descripcion_proyecto_'+num).val());
+            $('#editar_proyecto_fecha_inicio').val($('#fecha_inicio_proyecto_'+num).val());
+            $('#editar_proyecto_fecha_termino').val($('#fecha_termino_proyecto_'+num).val());
+            $('#proyecto_id').val(id_proyecto);
+
+            var miembros_proyecto_escogido = $('input[name=miembro_proyecto_'+num+']');
+            //editar_acta_miembros_presentes
+            var miembros_proyecto_editar = [];
+            //Seteamos miembros presentes
+            miembros_proyecto_escogido.each(function() {
+                miembros_proyecto_editar.push(this.value);
+            });
+            $("#editar_proyecto_miembros").selectpicker('val', miembros_proyecto_editar);
+
+            //No se permite eliminar proyectos. Puede tener impacto grande al eliminarse elementos, actas u otros del proyecto.
+            //Se deja como posible mejora
+            $("#editar_proyecto_miembros > option").each(function() {
+                if (this.selected){
+                    $(this).attr("disabled", "disabled");
+                }
+            });
+
+            $('#editar_proyecto_miembros').selectpicker('refresh');
+
+            $('#modal-editar-proyecto').modal('show');
+        }
+
+        function eliminar_proyecto (id) {
+            swal({
+                title: "¿Estás seguro?",
+                text: "El proyecto y sus reuniones serán eliminados permanentemente. <br><b>Esta opción no puede deshacerse</b>",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Sí, eliminar proyecto",
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: false,
+                html: true
+            }, function() {
+                $('#id_proyecto_eliminar').val(id);
+                $('#eliminar_proyecto_form').submit()
+            });
+        }
+
+    </script>
+{% endblock %}

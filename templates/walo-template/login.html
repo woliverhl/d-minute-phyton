@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+    <!--[if IE 9 ]><html class="ie9"><![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>D-Minute | Login</title>
+
+        <!-- Vendor CSS -->
+        {% load static  %}
+        <link href="{% static "vendors/animate-css/animate.min.css" %}" rel="stylesheet">
+        <link href="{% static "vendors/sweet-alert/sweet-alert.min.css" %}" rel="stylesheet">
+        <link href="{% static "vendors/material-icons/material-design-iconic-font.min.css" %}" rel="stylesheet">
+        <link href="{% static "vendors/socicon/socicon.min.css" %}" rel="stylesheet">
+        <link href="{% static "vendors/chosen/chosen.css" %}" rel="stylesheet">
+        <link href="{% static "vendors/bootstrap-select/bootstrap-select.css" %}" rel="stylesheet">
+
+        <!-- Favicon -->
+        <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{% static "img/favicomatic/apple-touch-icon-57x57.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static "img/favicomatic/apple-touch-icon-114x114.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static "img/favicomatic/apple-touch-icon-72x72.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static "img/favicomatic/apple-touch-icon-144x144.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="60x60" href="{% static "img/favicomatic/apple-touch-icon-60x60.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="120x120" href="{% static "img/favicomatic/apple-touch-icon-120x120.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="76x76" href="{% static "img/favicomatic/apple-touch-icon-76x76.png" %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="{% static "img/favicomatic/apple-touch-icon-152x152.png" %}" />
+        <link rel="icon" type="image/png" href="{% static "img/favicomatic/favicon-196x196.png" %}" sizes="196x196" />
+        <link rel="icon" type="image/png" href="{% static "img/favicomatic/favicon-96x96.png" %}" sizes="96x96" />
+        <link rel="icon" type="image/png" href="{% static "img/favicomatic/favicon-32x32.png" %}" sizes="32x32" />
+        <link rel="icon" type="image/png" href="{% static "img/favicomatic/favicon-16x16.png" %}" sizes="16x16" />
+
+        <!-- CSS -->
+        <link href="{% static "css/style.css" %}" rel="stylesheet">
+        <style type="text/css">
+            .notifications .btn {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        </style>
+
+    </head>
+    <br><br><br><br>
+    <body class="login-content">
+
+        <!-- Login -->
+        <form action="/index/" method="POST" id="login_usuario" name="login_usuario" class="form-horizontal">
+            {% csrf_token %}
+            <div class="lc-block toggled" id="l-login">
+                <div class="input-group m-b-20 form-group">
+                    <span class="input-group-addon"><i class="md md-mail"></i></span>
+                    <div class="fg-line">
+                        <input type="text" class="form-control" placeholder="Correo electrónico" id="login_username" name="login_username">
+                    </div>
+                </div>
+
+                <div class="input-group m-b-20 form-group">
+                    <span class="input-group-addon"><i class="md md-lock"></i></span>
+                    <div class="fg-line">
+                        <input type="password" class="form-control" placeholder="Contraseña" id="login_password" name="login_password">
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <input type="hidden" id="accion" name="accion" value="login_usuario" />
+                <!--<button class="btn btn-login btn-danger btn-float" type="submit"><i class="md md-arrow-forward"></i></button>-->
+                <button class="btn btn-primary btn-xs waves-effect" type="submit">Entrar</button>
+
+                {% if errorPassword %}
+                    <br>
+                    <p class="help-block c-red errorMsgLogin">La clave ingresada es incorrecta</p>
+                {% endif %}
+
+                {% if errorUsuarioNoExiste %}
+                    <br>
+                    <p class="help-block c-red errorMsgLogin">El usuario ingresado no existe</p>
+                {% endif %}
+
+                <!--<ul class="login-navigation">
+                    <li data-block="#l-register" class="bgm-red">Registrar</li>
+                    <li data-block="#l-forget-password" class="bgm-orange">Olvide mi contraseña</li>
+                </ul>-->
+            </div>
+        </form>
+        
+        <!-- Javascript Libraries -->
+        <script src="{% static "js/jquery-2.1.1.min.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
+        <script src="{% static "vendors/waves/waves.min.js" %}"></script>
+        <script src="{% static "js/functions.js" %}"></script>
+        <script src="{% static "js/bootstrapValidator.js" %}"></script>
+        <script src="{% static "vendors/nicescroll/jquery.nicescroll.min.js" %}"></script>
+        <script src="{% static "vendors/bootstrap-growl/bootstrap-growl.min.js" %}"></script>
+        <script src="{% static "vendors/sweet-alert/sweet-alert.min.js" %}"></script>
+        <script src="{% static "vendors/chosen/chosen.jquery.js" %}"></script>
+        <script src="{% static "vendors/bootstrap-select/bootstrap-select.js" %}"></script>
+        <script src="{% static "vendors/farbtastic/farbtastic.min.js" %}"></script>
+        <script src="{% static "vendors/fileinput/fileinput.min.js" %}"></script>
+        <script src="{% static "vendors/noUiSlider/jquery.nouislider.all.min.js" %}"></script>
+        <script>
+            var $=jQuery.noConflict();
+            $(document).ready(function() {
+                $('#agregar_usuario').bootstrapValidator({
+                    // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+                    container: 'tooltip',
+                    feedbackIcons: {
+                        valid: 'md md-check',
+                        invalid: 'md md-close',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields: {
+                       agregar_usuario_username: {
+                            trigger: 'blur',
+                            validators: {
+                                notEmpty: {
+                                    message: 'Debe ingresar correo electrónico'
+                                }
+                            }
+                        },
+                        agregar_usuario_nombres: {
+                            trigger: 'blur',
+                            validators: {
+                                notEmpty: {
+                                    message: 'Debe ingresar su nombre'
+                                },
+                                stringLength: {
+                                    max: 30,
+                                    message: 'El nombre debe tener menos de 30 letras'
+                                }
+                            }
+                        },
+                        agregar_usuario_apellidos: {
+                            trigger: 'blur',
+                            validators: {
+                                notEmpty: {
+                                    message: 'Debe ingresar su apellido'
+                                },
+                                stringLength: {
+                                    max: 30,
+                                    message: 'El apellido debe tener menos de 30 letras'
+                                }
+                            }
+                        },
+                        agregar_usuario_password: {
+                            validators: {
+                                notEmpty: {
+                                    message: 'Debe ingresar su clave'
+                                },
+                                stringLength: {
+                                    min: 5,
+                                    max: 30,
+                                    message: 'La clave debe tener entre 5 a 30 caracteres'
+                                }
+                            }
+                        }
+                    }
+                });
+                $('#login_usuario').bootstrapValidator({
+                    // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+                    container: 'tooltip',
+                    feedbackIcons: {
+                        valid: 'md md-check',
+                        invalid: 'md md-close',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields: {
+                        login_username: {
+                            trigger: 'blur',
+                            validators: {
+                                notEmpty: {
+                                    message: 'Debe ingresar un nombre de usuario'
+                                }
+                            }
+                        },
+                        login_password: {
+                            trigger: 'blur',
+                            validators: {
+                                notEmpty: {
+                                    message: 'Debe ingresar password'
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+            $(".errorMsgLogin").delay(3200).fadeOut(300);
+        </script>
+    </body>
+</html>

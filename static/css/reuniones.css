@@ -1,0 +1,176 @@
+.tabs-left, .tabs-right {
+  border-bottom: none;
+  padding-top: 2px;
+}
+.tabs-left {
+  border-right: 1px solid #ddd;
+}
+.tabs-right {
+  border-left: 1px solid #ddd;
+}
+.tabs-left>li, .tabs-right>li {
+  float: none;
+  margin-bottom: 2px;
+}
+.tabs-left>li {
+  margin-right: -1px;
+}
+.tabs-right>li {
+  margin-left: -1px;
+}
+.tabs-left>li.active>a,
+.tabs-left>li.active>a:hover,
+.tabs-left>li.active>a:focus {
+  border-bottom-color: #ddd;
+  border-right-color: transparent;
+}
+
+.tabs-right>li.active>a,
+.tabs-right>li.active>a:hover,
+.tabs-right>li.active>a:focus {
+  border-bottom: 1px solid #ddd;
+  border-left-color: transparent;
+}
+.tabs-left>li>a {
+  border-radius: 4px 0 0 4px;
+  margin-right: 0;
+  display:block;
+}
+.tabs-right>li>a {
+  border-radius: 0 4px 4px 0;
+  margin-right: 0;
+}
+
+.panel-nueva-reunion {
+
+    margin-top: 20px;
+}
+
+.panel-nueva-reunion .panel-body{
+  padding:10px;
+}
+.rigth-side-resumen{
+    padding-top: 10px;
+    float: right;
+    width: 170px;
+}
+
+.detalle-reunion .detalle-reunion-asistentes{
+  margin-top: 7px;
+  margin-right: 17px;
+}
+
+.detalle-reunion .plus-agregar-tema-reunion{
+  margin-right: -100px;
+}
+
+.titulo-tema{
+  font-weight:bold;
+  float:left;
+}
+
+.pencil-editar-reunion{
+    margin-right: 10px;
+}
+
+.acciones-sobre-temas{
+    float: right;
+    width: auto;
+}
+
+.panel-body{
+  padding:0px;
+  margin-left: 30px;
+}
+
+.compromiso-tema-d{
+  margin-top: 15px;
+}
+
+.botones-agregar-reunion{
+    float: right;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.block-header{
+    margin-top: 25px;
+}
+
+.row {
+  margin-right: -12px;
+}
+
+.lapiz-editar-reunion{
+    font-size: 20px;
+}
+
+.rigth-side-resumen > span > a > i{
+    transition: color;
+    transition-duration: 1300ms;
+    color: #adadad;
+    font-size: 20px;
+}
+
+.rigth-side-resumen > span > a:hover > i, .rigth-side-resumen > span > a:hover > i {
+    color: #000;
+}
+
+.rigth-side-resumen > span > a:before, .rigth-side-resumen > a:before {
+    background-color: rgba(0, 0, 0, 1);
+}
+
+.nav-pills > li > a, .nav-pills > li > a:hover, .nav-pills > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+}
+
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+    color: #ffffff;
+    background-color: #2196f3;
+}
+
+.panel-principal{
+    border: 1px solid #eeeeee;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+}
+
+.panel-principal .panel-heading{
+    padding-top: 15px;
+}
+
+.panel-body.central{
+    margin-left: 0px;
+}
+
+.columna-listado-reuniones{
+  width: 19%;
+}
+
+.columna-detalle-reuniones{
+  width: 81%;
+}
+
+#d3-chart22,
+#d3-chart22 svg{
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #0ab2da;
+}
+
+.selector-tipo-elemento>img{
+  height: 65px;
+  padding: 5px;
+}
+
+.imagenes-elementos{
+  margin-bottom: 45px !important;
+  margin-left: 8%;
+}
+
+.modal-ver-trazabilidad{
+  cursor: pointer;
+}

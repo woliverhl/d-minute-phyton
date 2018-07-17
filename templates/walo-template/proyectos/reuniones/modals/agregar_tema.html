@@ -1,0 +1,36 @@
+<div class="modal fade" id="modal-agregar-tema" name="modal-agregar-tema">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{% url 'agregar_tema' id_proyecto=proyecto.id id_acta=acta.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h4 class="modal-title">Agregar Tema</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 m-b-10">
+                            <div class="form-group fg-float">
+                                <label class="f-500 m-b-10 c-black">Nombre del tema</label>
+                                <div class="fg-line">
+                                    <input id="nombre_tema" maxlength="50" type="text" name="titulo-tema" class="form-control fg-input">
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label class="f-500 m-b-10 c-black">Síntesis</label>
+                            <div class="fg-line">
+                                <textarea rows="5" id="descripcion-tema-input" name="descripcion-tema-input" maxlength="600" class="form-control auto-size" placeholder="Ingrese discusión"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="agregar_tema" name="agregar_tema" class="btn bgm-blue waves-effect">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

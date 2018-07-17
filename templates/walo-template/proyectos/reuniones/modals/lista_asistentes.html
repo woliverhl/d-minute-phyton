@@ -1,0 +1,36 @@
+
+
+            <div id="div_ver_asistentes" class="row">
+                <!-- bs-item z-depth-3 -->
+                    <div id="agregar_acta_body" class="container">
+
+                        <div class="block-header">
+                            <h2>Asistentes</h2>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6">
+                                <div >
+
+                                    <div id="encabezado-body" style="max-height: 400px; overflow-x:hidden; overflow-y: auto;">
+                                        <div id="detalles-acta-body">
+                                            <div class="row">
+                                                <ul>
+                                                    {% for la in asistentes %}
+                                                    <li>
+                                                        {{ la.usuario.user.first_name }} {{ la.usuario.user.last_name }}
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="display:inline">
+                            <button class="btn btn-danger btn-xs waves-effect cancel" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+
+            </div>
